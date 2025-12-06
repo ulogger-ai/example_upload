@@ -1,0 +1,49 @@
+# Git ignore patterns for test repository
+
+# Build outputs
+build/
+dist/
+*.o
+*.obj
+*.elf
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Certificates (never commit these!)
+*.pem
+*.crt
+*.key
+*.p12
+*.pfx
+certificate.pem.crt
+private.pem.key
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*
+*.secret
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

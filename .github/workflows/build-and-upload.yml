@@ -1,0 +1,63 @@
+name: Build and Upload Firmware
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up build environment
+        run: |
+          echo "Setting up build environment..."
+          mkdir -p build
+      
+      - name: Simulate firmware build
+        run: |
+          echo "Building firmware..."
+          # In a real scenario, this would be your actual build process
+          # For testing, we'll copy the sample AXF file
+          cp sample_firmware.axf build/firmware.axf
+          ls -lh build/
+      
+      - name: Get version info
+        id: version
+        run: |
+          # Extract version from git tag or use default
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="0.0.0-dev-$(git rev-parse --short HEAD)"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+      
+      - name: Upload firmware to uLogger
+        uses: ulogger-ai/ulogger_upload@v1
+        with:
+          customer_id: ${{ secrets.ULOGGER_CUSTOMER_ID }}
+          application_id: ${{ secrets.ULOGGER_APPLICATION_ID }}
+          device_type: ${{ secrets.ULOGGER_DEVICE_TYPE }}
+          version: ${{ steps.version.outputs.VERSION }}
+          git_hash: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          file: 'build/firmware.axf'
+          cert_data: ${{ secrets.ULOGGER_CERT_DATA }}
+          key_data: ${{ secrets.ULOGGER_KEY_DATA }}
+          timeout: '60'
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: firmware-${{ steps.version.outputs.VERSION }}
+          path: build/
+          retention-days: 30
