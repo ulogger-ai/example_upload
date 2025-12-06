@@ -41,6 +41,7 @@ jobs:
           echo "Building version: $VERSION"
       
       - name: Upload firmware to uLogger
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: ulogger-ai/ulogger_upload@v1
         with:
           customer_id: ${{ secrets.ULOGGER_CUSTOMER_ID }}
