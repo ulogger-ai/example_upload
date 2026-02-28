@@ -269,7 +269,7 @@ After a successful upload, check the uLogger platform:
 
 1. Log into your uLogger dashboard
 2. Navigate to your application
-3. Check the firmware list - your new version should appear
+3. Check the Build Analyzer - your new version should appear
 4. Verify the metadata:
    - **Version**: Should match your git tag or dev version
    - **Git Hash**: Should match the commit SHA
