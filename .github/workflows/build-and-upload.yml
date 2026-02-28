@@ -39,7 +39,9 @@ jobs:
           else
             VERSION="0.0.0-dev-$(git rev-parse --short HEAD)"
           fi
+          SHORT_SHA=$(git rev-parse --short HEAD)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "GIT_SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
       
       - name: Upload firmware to uLogger
@@ -50,7 +52,7 @@ jobs:
           application_id: ${{ secrets.ULOGGER_APPLICATION_ID }}
           device_type: ${{ secrets.ULOGGER_DEVICE_TYPE }}
           version: ${{ steps.version.outputs.VERSION }}
-          git_hash: ${{ github.sha }}
+          git_hash: ${{ steps.version.outputs.GIT_SHORT_SHA }}
           branch: ${{ github.ref_name }}
           file: 'build/firmware.axf'
           cert_data: ${{ secrets.ULOGGER_CERT_DATA }}
